@@ -3,6 +3,8 @@
 //
 
 #include "keyParsing.h"
+#include <cstring>
+#include <cstdlib>
 
 void keyParsing::parse(int& argc, char **& argv) {
 
@@ -12,12 +14,15 @@ void keyParsing::parse(int& argc, char **& argv) {
     const static struct option long_keys[] = {
             {"help",no_argument, nullptr,'h'},
             {"version",no_argument, nullptr,'v'},
+            {"sum", required_argument, nullptr , 's'},
             {"delete",required_argument, nullptr,'d'},
             {nullptr,0, nullptr,0}
     };
 
-    while((opt = getopt_long(argc,argv,"hvd:",long_keys, &long_key_index)) != -1) {
+    while((opt = getopt_long(argc,argv,"hvs:d:",long_keys, &long_key_index)) != -1) {
         static bool occurred_h, occurred_v = false;
+        long int res;
+        char* num;
         sw:
 
         if (opt) {
@@ -36,6 +41,15 @@ void keyParsing::parse(int& argc, char **& argv) {
                     break;
                 case 'd':
                     std::cout << "Key: " << (char) opt << " argument: " << (char*) optarg << std::endl;
+                    break;
+                case 's':
+                    std::cout << "Key: " << (char) opt << " argument: " << (char*) optarg << std::endl;
+                    num = strtok(optarg,"+");
+                    res = strtol(num, nullptr, 10);
+                    while ( (num = strtok(nullptr,"+")) ) {
+                        res += strtol(num, nullptr, 10);
+                    }
+                    std::cout << "result: " << res << std::endl;
                     break;
                 default:
                     std::cout << "Invalid option" << std::endl;
